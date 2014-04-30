@@ -1,5 +1,5 @@
 #Animator
-##Basic
+##Basic:
 
-[x] Beziercurve adaptive method
-[x] Bspline adaptive method
+- [x] Beziercurve adaptive method
+- [x] Bspline adaptive method
