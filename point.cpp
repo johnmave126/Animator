@@ -53,3 +53,5 @@ bool PointLargerXCompare::operator()(const Point & first, const Point & second) 
 
 	return hasLargerX;
 }
+
+Point midPoint(Point a, Point b) { return Point((a.x+b.x)/2, (a.y+b.y)/2); }

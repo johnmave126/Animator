@@ -29,6 +29,8 @@ public:
 	float y;
 };
 
+Point midPoint(Point a, Point b);
+
 std::ostream& operator<<(std::ostream& output_stream, const Point& point);
 std::istream& operator>>(std::istream& input_stream, Point& point);
 

@@ -1,2 +1,4 @@
 Animator
 ========
+Basic
+[x] Beziercurve
