@@ -9,7 +9,10 @@ void BsplineCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts,
 	std::vector<Point> B = ptvCtrlPts;
 
 	if(!bWrap) ptvEvaluatedCurvePts.push_back(Point(0.0, B[0].y));
-	if(bWrap) B.push_back(Point(B[0].x + fAniLength, B[0].y));
+	if(bWrap) {
+		B.push_back(Point(B[0].x + fAniLength, B[0].y));
+		B.push_back(Point(B[1].x + fAniLength, B[1].y));
+	}
 	int size = B.size();
 
 	for(int i=0; i+3 < size; i++) {
