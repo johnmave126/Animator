@@ -3,11 +3,11 @@
 
 #pragma warning(disable : 4786)  
 
-#include "CurveEvaluator.h"
+#include "BezierCurveEvaluator.h"
 
 //using namespace std;
 
-class BsplineCurveEvaluator : public CurveEvaluator
+class BsplineCurveEvaluator : public BezierCurveEvaluator
 {
 public:
 	void evaluateCurve(const std::vector<Point>& ptvCtrlPts, 

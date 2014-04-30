@@ -282,6 +282,7 @@
   <ItemGroup>
     <None Include="cleanskel.pl" />
     <None Include="modeleruiwindows.fl" />
+    <None Include="README.md" />
     <None Include="skelrenamer.pl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
