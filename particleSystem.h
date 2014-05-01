@@ -75,9 +75,7 @@ public:
 
 
 protected:
-	
-
-
+	int number;	
 	/** Some baking-related state **/
 	float bake_fps;						// frame rate at which simulation was baked
 	float bake_start_time;				// time at which baking started 

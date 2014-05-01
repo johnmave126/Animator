@@ -6,6 +6,7 @@
 #include <FL/Fl.H>
 
 #include "modelerglobals.h"
+#include "particlesystem.h"
 #include "jacobian.h"
 typedef Vec3<double> v3;
 #define PI 3.14159265
@@ -634,5 +635,7 @@ int main()
 	controls[IK] = ModelerControl("start inverse kinematics", 0, 1, 1, 0);
 	controls[PIK] = ModelerControl("persist inverse kinematics", 0, 1, 1, 0);
     ModelerApplication::Instance()->Init(&createGundan, controls, NUMCONTROLS);
+	ParticleSystem *ps = new ParticleSystem();
+	ModelerApplication::Instance()->SetParticleSystem(ps);
     return ModelerApplication::Instance()->Run();
 }
