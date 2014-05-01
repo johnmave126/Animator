@@ -79,12 +79,9 @@ void RobotArm::draw()
 	float pc = VAL( PARTICLE_COUNT );
 
 
-    // This call takes care of a lot of the nasty projection 
-    // matrix stuff
+    // This call takes care of a lot of the nasty projection matrix stuff
     ModelerView::draw();
-
 	static GLfloat lmodel_ambient[] = {0.4,0.4,0.4,1.0};
-
 	// define the model
 
 	ground(-0.2);
@@ -169,6 +166,13 @@ void rotation_base(float h) {
 			glTranslatef( 0.5, h, 0.6 );
 			glRotatef( -90.0, 1.0, 0.0, 0.0 );
 			drawCylinder( h, 0.05, 0.05 ); // the pipe
+			//particle system
+			ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+			if (ps != NULL) {
+				GLfloat modelMatrix[16];
+				glGetFloatv(GL_MODELVIEW, modelMatrix);	
+				ps->setMatrix(modelMatrix);
+			}
 		glPopMatrix();
 	glPopMatrix();
 }
@@ -278,13 +282,9 @@ int main()
     controls[LOWER_LENGTH] = ModelerControl("lower arm length (h2)", 1, 10.0, 0.1, 3.0 );
     controls[UPPER_LENGTH] = ModelerControl("upper arm length (h3)", 1, 10.0, 0.1, 2.5 );
     controls[PARTICLE_COUNT] = ModelerControl("particle count (pc)", 0.0, 5.0, 0.1, 5.0 );
-    
 
-
-	// You should create a ParticleSystem object ps here and then
-	// call ModelerApplication::Instance()->SetParticleSystem(ps)
-	// to hook it up to the animator interface.
-
+	ParticleSystem *ps = new ParticleSystem();
+	ModelerApplication::Instance()->SetParticleSystem(ps);
     ModelerApplication::Instance()->Init(&createRobotArm, controls, NUMCONTROLS);
 
     return ModelerApplication::Instance()->Run();

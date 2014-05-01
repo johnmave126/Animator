@@ -3,4 +3,5 @@
 
 - [x] Beziercurve adaptive method
 - [x] Bspline adaptive method
-- [ ] Particle system
+- [x] Particle system
+- [x] bake particle system

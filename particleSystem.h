@@ -16,16 +16,14 @@
 #ifndef __PARTICLE_SYSTEM_H__
 #define __PARTICLE_SYSTEM_H__
 
+#include <FL/gl.h>
 #include "vec.h"
-
-
+#include "particle.h"
+#include <vector>
 
 class ParticleSystem {
 
 public:
-
-
-
 	/** Constructor **/
 	ParticleSystem();
 
@@ -62,8 +60,6 @@ public:
 	// of baked particles (without leaking memory).
 	virtual void clearBaked();	
 
-
-
 	// These accessor fxns are implemented for you
 	float getBakeStartTime() { return bake_start_time; }
 	float getBakeEndTime() { return bake_end_time; }
@@ -71,11 +67,17 @@ public:
 	bool isSimulate() { return simulate; }
 	bool isDirty() { return dirty; }
 	void setDirty(bool d) { dirty = d; }
-
-
+	void setMatrix(GLfloat m[]) {
+		for(int i=0; i<16; i++) { matrix[i] = m[i];}
+	}
 
 protected:
+	GLfloat matrix[16];
 	int number;	
+	float last_time;
+	std::vector<Particle> particles;
+	std::vector<Particle> *bake;
+	int max_bake;
 	/** Some baking-related state **/
 	float bake_fps;						// frame rate at which simulation was baked
 	float bake_start_time;				// time at which baking started 
