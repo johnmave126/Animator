@@ -1,42 +1,58 @@
 #include "bsplinecurveevaluator.h"
+#include "mat.h"
+#include "vec.h"
 
 void BsplineCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
 		std::vector<Point>& ptvEvaluatedCurvePts, 
 		const float& fAniLength, 
 		const bool& bWrap) const
 {
+	int i, j;
 	ptvEvaluatedCurvePts.clear();
-	std::vector<Point> B = ptvCtrlPts;
+	std::vector<Point> controlPts = ptvCtrlPts;
 
-	if(!bWrap) ptvEvaluatedCurvePts.push_back(Point(0.0, B[0].y));
 	if(bWrap) {
-		B.push_back(Point(B[0].x + fAniLength, B[0].y));
-		B.push_back(Point(B[1].x + fAniLength, B[1].y));
+		int s = controlPts.size();
+		controlPts.insert(controlPts.begin(), Point(controlPts[s - 1].x - fAniLength, controlPts[s - 1]. y));
+		controlPts.insert(controlPts.begin(), Point(controlPts[s - 1].x - fAniLength, controlPts[s - 1]. y));
+		controlPts.push_back(Point(controlPts[2].x + fAniLength, controlPts[2].y));
+		controlPts.push_back(Point(controlPts[3].x + fAniLength, controlPts[3].y));
 	}
-	int size = B.size();
+	else {
+		ptvEvaluatedCurvePts.push_back(Point(fAniLength, controlPts.back().y));
+		ptvEvaluatedCurvePts.push_back(Point(0.0, controlPts[0].y));
+	}
+	int size = controlPts.size();
 
-	for(int i=0; i+3 < size; i++) {
+	for(i=0; i+3 < size; i++) {
 		//first transform bspline to bezier
 		Point V[4];
-		V[0].x = (B[i].x + 4*B[i+1].x + B[i+2].x)/6;
-		V[0].y = (B[i].y + 4*B[i+1].y + B[i+2].y)/6;
-		V[1].x = (4*B[i+1].x + 2*B[i+2].x)/6;
-		V[1].y = (4*B[i+1].y + 2*B[i+2].y)/6;
-		V[2].x = (2*B[i+1].x + 4*B[i+2].x)/6;
-		V[2].y = (2*B[i+1].y + 4*B[i+2].y)/6;
-		V[3].x = (B[i+1].x + 4*B[i+2].x + B[i+3].x)/6;
-		V[3].y = (B[i+1].y + 4*B[i+2].y + B[i+3].y)/6;
-		//then display bezier curve
-		addBezier(ptvEvaluatedCurvePts, V);
-	}
-	
-	if(bWrap) {
-		std::vector<Point>::iterator it;
-		for(it=ptvEvaluatedCurvePts.begin(); it!=ptvEvaluatedCurvePts.end(); it++) {
-			if(it->x > fAniLength) it->x -= fAniLength;
+		Point N[4];
+		for(j = 0; j < 4; j++) {
+			N[j] = controlPts[i + j];
 		}
-	} else {
-		int count = ptvEvaluatedCurvePts.size();
-		ptvEvaluatedCurvePts.push_back(Point(fAniLength, ptvEvaluatedCurvePts[count-1].y));
+		toBezier(N, V);
+		//then display bezier curve
+		addBezier(ptvEvaluatedCurvePts, V, fAniLength);
+	}
+}
+
+void BsplineCurveEvaluator::toBezier(Point P[], Point V[]) const {
+	int i;
+	Mat4<float> Mcb(1.0 / 6, 2.0 / 3, 1.0 / 6, 0.0,
+					0.0    , 2.0 / 3, 1.0 / 3, 0.0,
+					0.0    , 1.0 / 3, 2.0 / 3, 0.0,
+					0.0    , 1.0 / 6, 2.0 / 3, 1.0 / 6);
+	Vec4<float> vx, vy;
+	for(i = 0; i < 4; i++) {
+		vx[i] = P[i].x;
+		vy[i] = P[i].y;
+	}
+	vx = Mcb * vx;
+	vy = Mcb * vy;
+	
+	for(i = 0; i < 4; i++) {
+		V[i].x = vx[i];
+		V[i].y = vy[i];
 	}
 }

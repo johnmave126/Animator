@@ -143,9 +143,6 @@ void ParticleSystem::drawParticles(float t)
 }
 
 
-
-
-
 /** Adds the current configuration of particles to
   * your data structure for storing baked particles **/
 void ParticleSystem::bakeParticles(float t) 

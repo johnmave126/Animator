@@ -1,46 +1,61 @@
 #include "catmullcurveevaluator.h"
+#include "mat.h"
+#include "vec.h"
 
 void CatmullCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
 		std::vector<Point>& ptvEvaluatedCurvePts, 
 		const float& fAniLength, 
 		const bool& bWrap) const
 {
+	int i, j;
 	ptvEvaluatedCurvePts.clear();
 	std::vector<Point> P = ptvCtrlPts;
-	if(bWrap) P.push_back(Point(P[0].x + fAniLength, P[0].y));
-
-	if(!bWrap) ptvEvaluatedCurvePts.push_back(Point(0.0, P[0].y));
-	if(bWrap) P.push_back(Point(P[0].x + fAniLength, P[0].y));
-	int size = P.size();
-
-	for(int i=0; i+3 < size; i++) {
-		Point V[4];
-		V[0].x = (-P[i].x + 3*P[i+1].x - 3*P[i+2].x + P[i+3].x)/2;
-		V[0].y = (-P[i].y + 3*P[i+1].y - 3*P[i+2].y + P[i+3].y)/2;
-		V[1].x = (2*P[i].x - 5*P[i+1].x + 4*P[i+2].x - P[i+3].x)/2;
-		V[1].y = (2*P[i].y - 5*P[i+1].y + 4*P[i+2].y - P[i+3].y)/2;
-		V[2].x = (-P[i].x + P[i+2].x)/2;
-		V[2].y = (-P[i].y + P[i+2].y)/2;
-		V[3] = P[i+1];
-
-		for(float t=0; t<1; t+= 0.01) {
-			float a=t*t*t;
-			float b=t*t;
-			float c=t;
-			float d=1;
-			float x=a*V[0].x + b*V[1].x + c*V[2].x + d*V[3].x;
-			float y=a*V[0].y + b*V[1].y + c*V[2].y + d*V[3].y;
-			ptvEvaluatedCurvePts.push_back(Point(x, y));
-		}
+	if(bWrap) {
+		int s = P.size();
+		P.insert(P.begin(), Point(P[s - 1].x - fAniLength, P[s - 1]. y));
+		P.insert(P.begin(), Point(P[s - 1].x - fAniLength, P[s - 1]. y));
+		P.push_back(Point(P[2].x + fAniLength, P[2].y));
+		P.push_back(Point(P[3].x + fAniLength, P[3].y));
+	}
+	else {
+		ptvEvaluatedCurvePts.push_back(Point(fAniLength, P.back().y));
+		ptvEvaluatedCurvePts.push_back(Point(0.0, P[0].y));
 	}
 
-	if(bWrap) {
-		std::vector<Point>::iterator it;
-		for(it=ptvEvaluatedCurvePts.begin(); it!=ptvEvaluatedCurvePts.end(); it++) {
-			if(it->x > fAniLength) it->x -= fAniLength;
+	//For simplicity, add 2 points at the beginning and the end
+	P.insert(P.begin(), P[0]);
+	P.push_back(P.back());
+
+	int size = P.size();
+
+	for(i = 0; i+3 < size; i++) {
+		Point V[4];
+		Point N[4];
+		for(j = 0; j < 4; j++) {
+			N[j] = P[i + j];
 		}
-	} else {
-		int count = ptvEvaluatedCurvePts.size();
-		ptvEvaluatedCurvePts.push_back(Point(fAniLength, ptvEvaluatedCurvePts[count-1].y));
+		toBezier(N, V);
+		addBezier(ptvEvaluatedCurvePts, V, fAniLength);
+	}
+}
+
+void CatmullCurveEvaluator::toBezier(Point P[], Point V[]) const {
+	int i;
+	float t = tension / 3.0;
+	Mat4<float> Mcb(0.0, 1.0, 0.0, 0.0,
+					-t , 1.0, t  , 0.0,
+					0.0, t  , 1.0, -t,
+					0.0, 0.0, 1.0, 0.0);
+	Vec4<float> vx, vy;
+	for(i = 0; i < 4; i++) {
+		vx[i] = P[i].x;
+		vy[i] = P[i].y;
+	}
+	vx = Mcb * vx;
+	vy = Mcb * vy;
+	
+	for(i = 0; i < 4; i++) {
+		V[i].x = vx[i];
+		V[i].y = vy[i];
 	}
 }

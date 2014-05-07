@@ -10,6 +10,7 @@
 class CurveEvaluator
 {
 public:
+	CurveEvaluator() {};
 	virtual ~CurveEvaluator(void);
 	virtual void evaluateCurve(const std::vector<Point>& control_points, 
 							   std::vector<Point>& evaluated_curve_points, 
