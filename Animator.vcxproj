@@ -262,7 +262,9 @@
     <ClInclude Include="curve.h" />
     <ClInclude Include="curveevaluator.h" />
     <ClInclude Include="euclid.h" />
+    <ClInclude Include="force.h" />
     <ClInclude Include="jacobian.h" />
+    <ClInclude Include="linearalgebra.h" />
     <ClInclude Include="linearcurveevaluator.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="mathfunc.h" />

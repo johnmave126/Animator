@@ -865,6 +865,8 @@ int ModelerUI::fps()
 void ModelerUI::fps(const int iFps)
 {
 	m_iFps = iFps;
+	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+	ps->setFps(m_iFps);
 }
 
 ModelerUI::ModelerUI() : 

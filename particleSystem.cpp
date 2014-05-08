@@ -19,7 +19,7 @@ ParticleSystem::ParticleSystem()
 	simulate = false;
 	bake_fps = 30; //bake 30 per seconds
 	max_bake = 10000;
-	bake = new std::vector<Particle>[max_bake];
+	number = 10;
 }
 
 
@@ -29,7 +29,6 @@ ParticleSystem::ParticleSystem()
 
 ParticleSystem::~ParticleSystem() 
 {
-	delete bake;
 }
 
 
@@ -40,7 +39,7 @@ ParticleSystem::~ParticleSystem()
 /** Start the simulation */
 void ParticleSystem::startSimulation(float t)
 {
-	bake_start_time = t;	
+	bake_start_time = t;
 	last_time = t;
 	// These values are used by the UI ...
 	// -ve bake_end_time indicates that simulation
@@ -76,37 +75,30 @@ void ParticleSystem::resetSimulation(float t)
 /** Compute forces and update particles **/
 void ParticleSystem::computeForcesAndUpdateParticles(float t)
 {
-
+	int i, bake_index;
 	if(!simulate) {
 		last_time =t; 
 		return;
 	}
 	
-	//search bake
-	int bake_index;
-	bake_index = t*bake_fps;
-	if(bake_index < max_bake && !bake[bake_index].empty()) {
-		particles = bake[bake_index];
+	if(loadBaked(t)) {
 		return;
 	}
 
-	//inital force
-	Vec3f force(0, 0, -5);
-
-	//produce 20 each time
-	number = 20;
-	for(int i=0; i<number; i++) {
+	Vec3f gravity(0,-1,0);
+	for(i=0; i<number; i++) {
 		Particle p;
-		p.position = Vec3f(-0.1, 0.1, -1.5);
+		p.position = init_position;
+		p.velocity = init_velocity;
+		p.attachForce(Force(gravity));
 		for(int j=0; j<3; j++) {
-			p.position[j] += 0.1* (rand()%5);
-			p.velocity[j] += force[j] / p.mass + 0.1* (rand()%10);
+			p.position[j] += 0.1* (rand()%5 - 2.5);
+			p.velocity[j] += 0.1* (rand()%10 - 5);
 		}
 		particles.push_back(p);
 	}
 
-	//gravity force
-	Vec3f gravity(0,-1,0);
+	//Compute force on particles one by one
 	std::vector<Particle>::iterator it;
 	float dt = t - last_time;
 	for(it = particles.begin(); it!=particles.end();) {
@@ -114,19 +106,22 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 			it = particles.erase(it);
 			continue;
 		}
+		Vec3f F(0.0, 0.0, 0.0);
+		std::vector<Force>::iterator itf;
+		for(itf = it->force.begin(); itf!= it->force.end(); itf++) {
+			F += itf->f;
+		}
 
 		for(int j=0; j<3; j++)
 		{
 			it->position[j] += dt * it->velocity[j];
-			it->velocity[j] += dt * gravity[j] / it->mass;
+			it->velocity[j] += dt * F[j] / it->mass;
 		}
 		it++;
 	}
 
-	//bake particles
-	if(bake_index < max_bake) {
-		bake[bake_index] = std::vector<Particle>(particles);
-	}
+	//Bake the particles
+	bakeParticles(t);
 	
 	last_time = t;
 }
@@ -136,6 +131,12 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 void ParticleSystem::drawParticles(float t)
 {
 	if(!simulate) return;
+	//Look for the bake index
+	
+	//search bake
+	if(!loadBaked(t)) {
+		computeForcesAndUpdateParticles(t);
+	}
 	std::vector<Particle>::iterator it;
 	for(it = particles.begin(); it!=particles.end(); it++) {
 		it->draw();
@@ -147,18 +148,41 @@ void ParticleSystem::drawParticles(float t)
   * your data structure for storing baked particles **/
 void ParticleSystem::bakeParticles(float t) 
 {
+	int bake_index = t * bake_fps;
+	//bake particles
+	if(storeBake.size() < max_bake) {
+		storeBake[bake_index] = std::vector<Particle>(particles);
+	}
+}
 
-	// TODO
+/** Clears out your data structure of baked particles */
+bool ParticleSystem::loadBaked(float t)
+{
+	int bake_index, i;
+	//search bake
+	bake_index = t * bake_fps;
+	if(storeBake.count(bake_index)) {
+		particles = storeBake[bake_index];
+		return true;
+	}
+	//Or do a local search
+	//Bear within 1 frames
+	for(i = 1; i < 2; i++) {
+		if(storeBake.count(bake_index + i)) {
+			particles = storeBake[bake_index + i];
+			return true;
+		}
+		if(storeBake.count(bake_index - i)) {
+			particles = storeBake[bake_index - i];
+			return true;
+		}
+	}
+	return false;
 }
 
 /** Clears out your data structure of baked particles */
 void ParticleSystem::clearBaked()
 {
-
-	// TODO
+	storeBake.clear();
 }
-
-
-
-
 

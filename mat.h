@@ -486,4 +486,5 @@ inline bool operator !=( const Mat4<T>& a, const Mat4<T>& b ) {
 	return memcmp(a.n,b.n,16*sizeof(T));
 }
 
+
 #endif

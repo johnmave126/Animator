@@ -200,6 +200,12 @@
     <ClInclude Include="mathfunc.h">
       <Filter>Header Files\Model.</Filter>
     </ClInclude>
+    <ClInclude Include="linearalgebra.h">
+      <Filter>Header Files\Model.</Filter>
+    </ClInclude>
+    <ClInclude Include="force.h">
+      <Filter>Header Files\Particles.</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cleanskel.pl">

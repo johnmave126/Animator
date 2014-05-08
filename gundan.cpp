@@ -2,12 +2,14 @@
 #include "modelerapp.h"
 #include "modelerdraw.h"
 #include "vec.h"
+#include "mat.h"
 #include <FL/gl.h>
 #include <FL/Fl.H>
 
 #include "modelerglobals.h"
 #include "particlesystem.h"
 #include "jacobian.h"
+#include <ctime>
 typedef Vec3<double> v3;
 #define PI 3.14159265
 template<class T>
@@ -44,8 +46,13 @@ private:
 	bool updateIKR(int);
 	void drawGoal();
 
+	void spawnParticles(Mat4<float> cameraTransform);
+	Mat4<float> getModelViewMatrix();
+
 	Jacobian *left_feet;
 	bool IK_flag;
+
+	Mat4f cameraT;
 };
 
 Gundan *Gundan::instance = NULL;
@@ -130,6 +137,28 @@ ModelerView* createGundan(int x, int y, int w, int h, char *label)
 { 
     Gundan::instance = new Gundan(x,y,w,h,label); 
 	return Gundan::instance;
+}
+
+void Gundan::spawnParticles(Mat4<float> cameraTransform) {
+	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+	Mat4f ModelT = getModelViewMatrix();
+	Mat4f World = cameraTransform.inverse() * ModelT;
+	Vec4f Loc = World * Vec4f(0.0, 0.0, 0.0, 1.0);
+	Vec4f VelL = World * Vec4f(0.0, 0.0, -2.0, 1.0);
+	Vec4f Vel = VelL - Loc;
+	Vec3f v(Vel[0], Vel[1], Vel[2]);
+	v.normalize();
+	ps->setParticleStart(Vec3f(Loc[0], Loc[1], Loc[2]), v);
+}
+
+Mat4<float> Gundan::getModelViewMatrix() {
+    GLfloat m[16];
+    glGetFloatv(GL_MODELVIEW_MATRIX, m);
+    Mat4f matMV(m[0], m[1], m[2], m[3],
+        m[4], m[5], m[6], m[7],
+        m[8], m[9], m[10], m[11],
+        m[12], m[13], m[14], m[15] );
+    return matMV.transpose(); // because the matrix GL returns is column major
 }
 
 void Gundan::drawRightThign()
@@ -319,6 +348,10 @@ void Gundan::drawBody()
 	glTranslated(0, 0.5, -0.5-0.8);
 	setDiffuseColor(1.0f, 1.0f, 1.0f);
 	drawCylinder(0.8, 0.01, 0.4);
+	glPushMatrix();
+	glTranslated(0, 0, 0.8);
+	spawnParticles(cameraT);
+	glPopMatrix();
 	//draw Body
 	glTranslated(-1, -1.5, 0.8);
 	setDiffuseColor(0.5f, 0.5f, 0.5f);
@@ -455,6 +488,7 @@ void Gundan::drawSword()
 void Gundan::draw()
 {
     ModelerView::draw();
+	cameraT = getModelViewMatrix();
 	if(VAL(IK) || VAL(PIK)) {
 		beginIK();
 	}
@@ -608,6 +642,7 @@ void Gundan::drawGoal() {
 
 int main()
 {
+	srand((unsigned)time(NULL));
     ModelerControl controls[NUMCONTROLS];
     controls[LEVEL] = ModelerControl("level", 1, 4, 1, 4);
     controls[LHANDX] = ModelerControl("left hand x", 0, 70, 1, 10);

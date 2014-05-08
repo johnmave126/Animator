@@ -2,6 +2,8 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 #include "vec.h"
+#include "force.h"
+#include <vector>
 
 class Particle{
 public:
@@ -11,8 +13,10 @@ public:
 	void draw();
 	void update(Vec3f velocity, Vec3f position);
 	bool toofar();
+	void attachForce(Force f);
 	Vec3f velocity;
 	Vec3f position;
 	float mass;
+	std::vector<Force> force;
 };
 #endif

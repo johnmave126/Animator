@@ -20,3 +20,7 @@ void Particle::update(Vec3f v, Vec3f p)
 	velocity = v;
 	position = p;
 }
+
+void Particle::attachForce(Force f) {
+	force.push_back(f);
+}
