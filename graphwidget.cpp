@@ -108,7 +108,7 @@ m_iCurrCurve(-1),
 m_ivActiveCurves(),
 m_fEndTime(20.0f),
 m_fCurrTime(0.0f),
-m_fTension(0.5f),
+m_bEvalpts(false),
 m_rectCurrViewport(0.0f - ks_fViewportMargin, 1.0f + ks_fViewportMargin, 0.0f - ks_fViewportMargin, 1.0f + ks_fViewportMargin),
 m_bPanning(false),
 m_bHasEvent(false),
@@ -538,6 +538,16 @@ void GraphWidget::refreshTension() {
 	}
 }
 
+void GraphWidget::showEvalPts(bool active) {
+	m_bEvalpts = active;
+	invalidateAllCurves();
+}
+
+void GraphWidget::setEps(float eps) {
+	CurveEvaluator::s_fFlatnessEpsilon = eps;
+	invalidateAllCurves();
+}
+
 void GraphWidget::scaleTime(const float fScale)
 {
 	for (int i = 0; i < m_pcrvvCurves.size(); ++i) {
@@ -921,6 +931,9 @@ void GraphWidget::drawCurve(int iCurve, int iColor) const
 		glLineWidth(3.0);
 	}
 	m_pcrvvCurves[iCurve]->drawEvaluatedCurveSegments();
+	if(m_bEvalpts) {
+		m_pcrvvCurves[iCurve]->drawEvaluatedPoints();
+	}
 	if (iCurve == m_iCurrCurve)
 		glLineWidth(1.0);
 	m_pcrvvCurves[iCurve]->drawControlPoints();

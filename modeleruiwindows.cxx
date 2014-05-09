@@ -84,7 +84,7 @@ ModelerUIWindows::ModelerUIWindows() {
         o->end();
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Group* o = m_pgrpCurveGroup = new Fl_Group(160, 55, 425, 465, "Curves");
+      { Fl_Group* o = m_pgrpCurveGroup = new Fl_Group(160, 55, 425, 485, "Curves");
         o->labelsize(12);
         { Fl_Group* o = new Fl_Group(160, 55, 420, 410);
           { Fl_Box* o = new Fl_Box(160, 55, 40, 20, "Useless Box");
@@ -109,7 +109,7 @@ ModelerUIWindows::ModelerUIWindows() {
           o->end();
           Fl_Group::current()->resizable(o);
         }
-        { Fl_Group* o = new Fl_Group(160, 470, 420, 50);
+        { Fl_Group* o = new Fl_Group(160, 470, 420, 70);
           { Fl_Box* o = new Fl_Box(160, 470, 75, 20, "Curve Type:");
             o->labelsize(12);
             o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -121,7 +121,7 @@ ModelerUIWindows::ModelerUIWindows() {
             o->user_data((void*)(this));
             o->menu(menu_m_pchoCurveType);
           }
-          { Fl_Light_Button* o = m_pbtWrap = new Fl_Light_Button(345, 470, 70, 20, "Wrap");
+          { Fl_Light_Button* o = m_pbtWrap = new Fl_Light_Button(350, 470, 70, 20, "Wrap");
             o->labelsize(12);
             o->user_data((void*)(this));
           }
@@ -135,6 +135,19 @@ ModelerUIWindows::ModelerUIWindows() {
             o->step(0.01);
             o->value(0.5);
             o->user_data((void*)(this));
+          }
+          { Fl_Light_Button* o = m_pbtEvalP = new Fl_Light_Button(500, 495, 80, 20, "Eval Pts");
+            o->user_data((void*)(this));
+          }
+          { Fl_Value_Slider* o = m_psldrFlat = new Fl_Value_Slider(360, 495, 135, 20, "-log_10(flat_eps)");
+            o->type(5);
+            o->minimum(1);
+            o->maximum(8);
+            o->step(1);
+            o->value(5);
+            o->user_data((void*)(this));
+            o->align(FL_ALIGN_BOTTOM_LEFT);
+            Fl_Group::current()->resizable(o);
           }
           o->end();
         }

@@ -591,6 +591,24 @@ void ModelerUI::cb_tension(Fl_Value_Input* o, void *v) {
 	((ModelerUI*)(o->user_data()))->cb_tension_i(o,v);
 }
 
+inline void ModelerUI::cb_flatness_i(Fl_Value_Slider* o, void *v) {
+	m_pwndGraphWidget->setEps(exp(-o->value()));
+	m_pwndGraphWidget->redraw();
+}
+
+void ModelerUI::cb_flatness(Fl_Value_Slider* o, void *v) {
+	((ModelerUI*)(o->user_data()))->cb_flatness_i(o,v);
+}
+
+inline void ModelerUI::cb_evalpt_i(Fl_Light_Button* o, void *v) {
+	m_pwndGraphWidget->showEvalPts(o->value());
+	m_pwndGraphWidget->redraw();
+}
+
+void ModelerUI::cb_evalpt(Fl_Light_Button* o, void *v) {
+	((ModelerUI*)(o->user_data()))->cb_evalpt_i(o,v);
+}
+
 Fl_Box* ModelerUI::labelBox(int nBox) 
 {
   return (Fl_Box*)m_ppckPack->child(nBox * 2);
@@ -930,6 +948,8 @@ m_bSaveMovie(false)
 	m_poutPlayEnd->value("20.00");
 
 	m_iTension->callback((Fl_Callback*)cb_tension);
+	m_psldrFlat->callback((Fl_Callback*)cb_flatness);
+	m_pbtEvalP->callback((Fl_Callback*)cb_evalpt);
 
 	endTime(20.0f);
 }

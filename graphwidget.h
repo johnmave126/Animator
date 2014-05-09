@@ -109,6 +109,9 @@ public:
 	void tension(float t);
 	void refreshTension();
 
+	void showEvalPts(bool active);
+	void setEps(float eps);
+
 	const Curve* curve(int iCurve) const;
 	bool saveScript(const char* szFileName) const;
 	bool loadScript(const char* szFileName);
@@ -125,7 +128,7 @@ protected:
 	bool m_bRButtonDown;
 	bool m_bPanning;
 	int m_iMouseX, m_iMouseY, m_iMouseDX, m_iMouseDY;
-	float m_fTension;
+	bool m_bEvalpts;
 
 	// the current viewport (for zoomin). 
 	// (left, right, bottom, top) = (0, 1, 0, 1) means that there's no zoomin.

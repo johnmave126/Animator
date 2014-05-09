@@ -140,6 +140,10 @@ private:
 	static void cb_timed(void *); // timed callback for animation
 	inline void cb_tension_i(Fl_Value_Input*, void*);
 	static void cb_tension(Fl_Value_Input*, void*);
+	inline void cb_flatness_i(Fl_Value_Slider*, void*);
+	static void cb_flatness(Fl_Value_Slider*, void*);
+	inline void cb_evalpt_i(Fl_Light_Button*, void*);
+	static void cb_evalpt(Fl_Light_Button*, void*);
 };
 
 #endif

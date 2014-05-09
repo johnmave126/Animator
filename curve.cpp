@@ -355,6 +355,10 @@ void Curve::drawCurve() const
 void Curve::drawEvaluatedCurveSegments() const
 {
 	reevaluate();
+	
+	double fLineWidth;
+	glGetDoublev(GL_LINE_WIDTH, &fLineWidth);
+	glLineWidth(2.0);
 
 	glBegin(GL_LINE_STRIP);
 
@@ -365,6 +369,28 @@ void Curve::drawEvaluatedCurveSegments() const
 		}
 
 	glEnd();
+	glPointSize(fLineWidth);
+}
+
+void Curve::drawEvaluatedPoints() const
+{
+	reevaluate();
+	
+	double fPointSize;
+	glGetDoublev(GL_POINT_SIZE, &fPointSize);
+	glPointSize(4.0);
+
+	glColor3f(0.0f, 1.0f, 1.0f);
+	glBegin(GL_POINTS);
+
+		for (std::vector<Point>::const_iterator it = m_ptvEvaluatedCurvePts.begin(); 
+			it != m_ptvEvaluatedCurvePts.end(); 
+			++it) {
+			glVertex2f(it->x, it->y);
+		}
+
+	glEnd();
+	glPointSize(fPointSize);
 }
 
 void Curve::drawControlPoint(int iCtrlPt) const

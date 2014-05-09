@@ -45,6 +45,7 @@ public:
 	void wrap(bool bWrap);
 	bool wrap() const;
 	void drawEvaluatedCurveSegments(void) const;
+	void drawEvaluatedPoints(void) const;
 	void drawControlPoints(void) const;
 	void drawControlPoint(int iCtrlPt) const;
 	void drawCurve(void) const;
