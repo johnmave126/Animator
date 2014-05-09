@@ -294,6 +294,9 @@
   <ItemGroup>
     <None Include="cleanskel.pl" />
     <None Include="modeleruiwindows.fl" />
+    <Image Include="particle.tga">
+      <FileType>Document</FileType>
+    </Image>
     <None Include="README.md" />
     <None Include="skelrenamer.pl" />
   </ItemGroup>

@@ -234,4 +234,9 @@
     </None>
     <None Include="README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="particle.tga">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

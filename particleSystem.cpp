@@ -9,6 +9,26 @@
 #include <math.h>
 #include <limits.h>
 
+#include <algorithm>
+
+
+#include <FL/Fl.H>
+#include <FL/Fl_Gl_Window.h>
+#include <FL/gl.h>
+#include <GL/glu.h>
+
+
+class SortCamera {
+public:
+	SortCamera(Camera* cam): camera(cam) {}
+
+	bool operator()(Particle& x, Particle& y) const {
+		Vec3f cd = camera->getLookAt() - camera->getPos();
+		return ((y.position - x.position) * cd) < 0;
+	}
+
+	Camera* camera;
+};
 
 /***************
  * Constructors
@@ -92,7 +112,7 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 		p.velocity = init_velocity;
 		for(int j=0; j<3; j++) {
 			p.position[j] += 0.1* (rand()%5 - 2.5);
-			p.velocity[j] += 0.1* (rand()%10 - 5);
+			p.velocity[j] += 0.1* (rand()%5 - 2.5);
 		}
 		particles.push_back(p);
 	}
@@ -125,7 +145,6 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 	last_time = t;
 }
 
-
 /** Render particles */
 void ParticleSystem::drawParticles(float t, Camera* cam)
 {
@@ -136,10 +155,25 @@ void ParticleSystem::drawParticles(float t, Camera* cam)
 	if(!loadBaked(t)) {
 		computeForcesAndUpdateParticles(t);
 	}
+
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_BLEND);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+	std::sort(particles.begin(), particles.end(), SortCamera(cam));
+
 	std::vector<Particle>::iterator it;
 	for(it = particles.begin(); it!=particles.end(); it++) {
 		it->draw(cam);
 	}
+	
+	glDisable(GL_BLEND);
+	glDisable(GL_TEXTURE_2D);
 }
 
 

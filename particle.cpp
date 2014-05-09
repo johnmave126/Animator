@@ -2,6 +2,9 @@
 #include "modelerdraw.h"
 #include "force.h"
 
+
+GLuint Particle::texID = 0;
+
 Particle::Particle()
 	:mass(1.0), position(Vec3f(0,0,0)), velocity(Vec3f(0,0,0)) {};
 
@@ -17,7 +20,7 @@ void Particle::draw(Camera* cam) {
 		d.normalize();
 		Vec3f right = d ^ up;
 
-		//So we need to map z to -direction
+		//So we need to map z to -d
 		//y to up, x to right
 		GLfloat m[16];
 		m[0] = right[0]; m[4] = up[0]; m[8]  = -d[0]; m[12] = 0.0;
@@ -27,13 +30,21 @@ void Particle::draw(Camera* cam) {
 
 		glMultMatrixf(m);
 		
-		glColor3d(1.0f, 1.0f, 1.0f);
+		//glEnable(GL_TEXTURE_2D);
+		
+		float c[] = {0.01, 0.9, 0.01, 1.0};
+
+		glMaterialfv( GL_FRONT_AND_BACK, GL_DIFFUSE, c);
+
+		glBindTexture(GL_TEXTURE_2D, texID);
 		glBegin(GL_QUADS);
-			glVertex3f(-0.1f, -0.1f, 0.0f);
-			glVertex3f(-0.1f, 0.1f, 0.0f);
-			glVertex3f(0.1f, 0.1f, 0.0f);
-			glVertex3f(0.1f, -0.1f, 0.0f);
+			glColor4d(0.0f, 1.0f, 1.0f, 1.0f);
+			glTexCoord2f(0.0f, 0.0f); glVertex3f(-0.1f, -0.1f, 0.0f);
+			glTexCoord2f(0.0f, 1.0f); glVertex3f(-0.1f, 0.1f, 0.0f);
+			glTexCoord2f(1.0f, 1.0f); glVertex3f(0.1f, 0.1f, 0.0f);
+			glTexCoord2f(1.0f, 0.0f); glVertex3f(0.1f, -0.1f, 0.0f);
 		glEnd();
+		//glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
 }
 

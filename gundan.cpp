@@ -156,7 +156,7 @@ void Gundan::spawnParticles(Mat4<float> cameraTransform) {
 	Mat4f ModelT = getModelViewMatrix();
 	Mat4f World = cameraTransform.inverse() * ModelT;
 	Vec4f Loc = World * Vec4f(0.0, 0.0, 0.0, 1.0);
-	Vec4f VelL = World * Vec4f(0.0, 0.0, -2.0, 1.0);
+	Vec4f VelL = World * Vec4f(0.0, 0.0, -0.5, 1.0);
 	Vec4f Vel = VelL - Loc;
 	Vec3f v(Vel[0], Vel[1], Vel[2]);
 	v.normalize();
@@ -500,6 +500,7 @@ void Gundan::drawSword()
 void Gundan::draw()
 {
     ModelerView::draw();
+
 	cameraT = getModelViewMatrix();
 	if(VAL(IK) || VAL(PIK)) {
 		beginIK();
@@ -513,9 +514,18 @@ void Gundan::draw()
 	glPushMatrix();
 	drawGundan(level);
 	glPopMatrix();
+
+	
+	// If particle system exists, draw it
+	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
+	if (ps != NULL) {
+		ps->computeForcesAndUpdateParticles(t);
+		ps->drawParticles(t, m_camera);
+	}
 }
 
 void Gundan::drawGundan(int level) {
+	glBlendFunc(GL_ONE, GL_ZERO);
 	drawBody();
 	if(level>=2) {
 		glPushMatrix();
@@ -687,7 +697,7 @@ int main()
 	controls[PIK] = ModelerControl("persist inverse kinematics", 0, 1, 1, 0);
     ModelerApplication::Instance()->Init(&createGundan, controls, NUMCONTROLS);
 	ParticleSystem *ps = new ParticleSystem();
-	ps->addFieldForce(Force(0.0, -0.98, 0.0));
+	ps->addFieldForce(Force(0.0, -1.0, 0.0));
 	ModelerApplication::Instance()->SetParticleSystem(ps);
     return ModelerApplication::Instance()->Run();
 }

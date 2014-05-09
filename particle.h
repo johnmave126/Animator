@@ -4,6 +4,11 @@
 #include "camera.h"
 #include <vector>
 
+#include <FL/Fl.H>
+#include <FL/Fl_Gl_Window.h>
+#include <FL/gl.h>
+#include <GL/glu.h>
+
 class Force;
 
 class Particle{
@@ -20,5 +25,8 @@ public:
 	float mass;
 	std::vector<Force> force;
 	friend class Force;
+
+	static GLuint texID;
 };
+
 #endif
