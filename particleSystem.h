@@ -19,6 +19,7 @@
 #include <FL/gl.h>
 #include "vec.h"
 #include "particle.h"
+#include "force.h"
 #include <vector>
 #include <map>
 
@@ -82,6 +83,11 @@ public:
 			init_velocity = vel;
 		}
 	}
+	void addFieldForce(Force f) {
+		fieldForce.push_back(f);
+	}
+
+	void rkProc(Particle& p, std::vector<Force>& f, float dt);
 
 protected:
 	GLfloat matrix[16];
@@ -89,6 +95,7 @@ protected:
 	float last_time;
 	std::vector<Particle> particles;
 	std::map<int, std::vector<Particle>> storeBake;
+	std::vector<Force> fieldForce;
 	int max_bake;
 	Vec3f init_position;
 	Vec3f init_velocity;

@@ -156,6 +156,7 @@
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="euclid.cpp" />
+    <ClCompile Include="force.cpp" />
     <ClCompile Include="gundan.cpp" />
     <ClCompile Include="jacobian.cpp" />
     <ClCompile Include="linearcurveevaluator.cpp">

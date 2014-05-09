@@ -1,5 +1,6 @@
 #include "particle.h"
 #include "modelerdraw.h"
+#include "force.h"
 
 Particle::Particle()
 	:mass(1.0), position(Vec3f(0,0,0)), velocity(Vec3f(0,0,0)) {};

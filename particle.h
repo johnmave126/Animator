@@ -2,8 +2,9 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 #include "vec.h"
-#include "force.h"
 #include <vector>
+
+class Force;
 
 class Particle{
 public:
@@ -18,5 +19,6 @@ public:
 	Vec3f position;
 	float mass;
 	std::vector<Force> force;
+	friend class Force;
 };
 #endif

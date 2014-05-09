@@ -2,6 +2,8 @@
 #define FORCE_H
 #include "vec.h"
 
+class Particle;
+
 class Force{
 public:
 	Force();
@@ -10,5 +12,7 @@ public:
 	Force(Vec3f fv)
 		:f(fv) {};
 	Vec3f f;
+
+	virtual Vec3f getAcc(const Particle& p) const;
 };
 #endif

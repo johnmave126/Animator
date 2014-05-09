@@ -671,6 +671,7 @@ int main()
 	controls[PIK] = ModelerControl("persist inverse kinematics", 0, 1, 1, 0);
     ModelerApplication::Instance()->Init(&createGundan, controls, NUMCONTROLS);
 	ParticleSystem *ps = new ParticleSystem();
+	ps->addFieldForce(Force(0.0, -0.98, 0.0));
 	ModelerApplication::Instance()->SetParticleSystem(ps);
     return ModelerApplication::Instance()->Run();
 }

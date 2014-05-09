@@ -85,12 +85,11 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 		return;
 	}
 
-	Vec3f gravity(0,-1,0);
 	for(i=0; i<number; i++) {
 		Particle p;
+		p.mass = 3.0;
 		p.position = init_position;
 		p.velocity = init_velocity;
-		p.attachForce(Force(gravity));
 		for(int j=0; j<3; j++) {
 			p.position[j] += 0.1* (rand()%5 - 2.5);
 			p.velocity[j] += 0.1* (rand()%10 - 5);
@@ -106,17 +105,17 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 			it = particles.erase(it);
 			continue;
 		}
-		Vec3f F(0.0, 0.0, 0.0);
+
+		std::vector<Force> ff;
 		std::vector<Force>::iterator itf;
 		for(itf = it->force.begin(); itf!= it->force.end(); itf++) {
-			F += itf->f;
+			ff.push_back(*itf);
+		}
+		for(itf = fieldForce.begin(); itf!=fieldForce.end(); itf++) {
+			ff.push_back(*itf);
 		}
 
-		for(int j=0; j<3; j++)
-		{
-			it->position[j] += dt * it->velocity[j];
-			it->velocity[j] += dt * F[j] / it->mass;
-		}
+		rkProc(*it, ff, dt);
 		it++;
 	}
 
@@ -184,5 +183,45 @@ bool ParticleSystem::loadBaked(float t)
 void ParticleSystem::clearBaked()
 {
 	storeBake.clear();
+}
+
+void ParticleSystem::rkProc(Particle& p, std::vector<Force>& f, float dt) {
+	std::vector<Force>::iterator itf;
+
+	Vec3f x1 = p.position;
+	Vec3f v1 = p.velocity;
+	Vec3f a1(0.0, 0.0, 0.0);
+	for(itf = f.begin(); itf!= f.end(); itf++) {
+		a1 += itf->getAcc(p);
+	}
+	
+	Vec3f x2 = x1 + 0.5 * v1 * dt;
+	Vec3f v2 = v1 + 0.5 * a1 * dt;
+	Vec3f a2(0.0, 0.0, 0.0);
+	p.position = x2; p.velocity = v2;
+	for(itf = f.begin(); itf!= f.end(); itf++) {
+		a2 += itf->getAcc(p);
+	}
+	
+	Vec3f x3 = x2 + 0.5 * v2 * dt;
+	Vec3f v3 = v2 + 0.5 * a2 * dt;
+	Vec3f a3(0.0, 0.0, 0.0);
+	p.position = x3; p.velocity = v3;
+	for(itf = f.begin(); itf!= f.end(); itf++) {
+		a3 += itf->getAcc(p);
+	}
+	
+	Vec3f x4 = x3 + v3 * dt;
+	Vec3f v4 = v3 + a3 * dt;
+	Vec3f a4(0.0, 0.0, 0.0);
+	p.position = x4; p.velocity = v4;
+	for(itf = f.begin(); itf!= f.end(); itf++) {
+		a4 += itf->getAcc(p);
+	}
+	
+	Vec3f xf = x1 + (dt/6)*(v1 + 2*v2 + 2*v3 + v4);
+	Vec3f vf = v1 + (dt/6)*(a1 + 2*a2 + 2*a3 + a4);
+
+	p.position = x4; p.velocity = v4;
 }
 
