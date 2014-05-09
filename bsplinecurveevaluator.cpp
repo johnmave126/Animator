@@ -33,7 +33,7 @@ void BsplineCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts,
 		}
 		toBezier(N, V);
 		//then display bezier curve
-		addBezier(ptvEvaluatedCurvePts, V, fAniLength);
+		addBezier(ptvEvaluatedCurvePts, V, 0.0f, fAniLength);
 	}
 }
 

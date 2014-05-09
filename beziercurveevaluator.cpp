@@ -1,5 +1,7 @@
 #include "beziercurveevaluator.h"
 
+#define MIN(x, y) ((x < y) ? (x) : (y))
+
 void BezierCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts, 
 		std::vector<Point>& ptvEvaluatedCurvePts, 
 		const float& fAniLength, 
@@ -47,7 +49,7 @@ bool BezierCurveEvaluator::flat(Point points[]) const
 	for(int i=0; i<3; i++) {
 		dis += points[i].distance(points[i+1]);	
 	}
-	return (dis <= (1+s_fFlatnessEpsilon) * points[0].distance(points[3]));
+	return (dis <= (1+s_fFlatnessEpsilon) * points[0].distance(points[3]));;
 }
 
 void BezierCurveEvaluator::divide(Point P[], Point L[], Point R[]) const
@@ -64,16 +66,20 @@ void BezierCurveEvaluator::divide(Point P[], Point L[], Point R[]) const
 	L[3] = R[0];
 }
 
-void BezierCurveEvaluator::addBezier(std::vector<Point>& evaluatePoints, Point points[], float rightBorder) const
+void BezierCurveEvaluator::addBezier(std::vector<Point>& evaluatePoints, Point points[], float leftBorder, float rightBorder) const
 {
+	//Ensure function
+	rightBorder = MIN(rightBorder, points[3].x);
+	leftBorder = MIN(leftBorder, points[0].x);
 	if(flat(points)) {
 		for(int i=0; i<4; i++) {
-			if(points[0].x < 0 && points[i - 1].x < 0 && points[i].x >= 0) {
+			if(points[0].x < leftBorder && points[i - 1].x < leftBorder && points[i].x >= leftBorder) {
 				//Interpolate
 				float dx = points[i].x - points[i - 1].x;
+				float q = points[i].x - leftBorder;
 				Point p;
-				p.x = 0.0;
-				p.y = points[i].x / dx * points[i - 1].y  - points[i - 1].x / dx * points[i].y;
+				p.x = leftBorder;
+				p.y = q / dx * points[i - 1].y  - (1 - q / dx) * points[i].y;
 				evaluatePoints.push_back(p);
 			}
 			if(points[3].x > rightBorder && points[i + 1].x > rightBorder && points[i].x <= rightBorder) {
@@ -81,18 +87,18 @@ void BezierCurveEvaluator::addBezier(std::vector<Point>& evaluatePoints, Point p
 				float dx = points[i + 1].x - points[i].x;
 				float q = rightBorder - points[i].x;
 				Point p;
-				p.x = 0.0;
+				p.x = rightBorder;
 				p.y = q / dx * points[i + 1].y + (1 - q / dx) * points[i].y;
 				evaluatePoints.push_back(p);
 			}
-			if(points[i].x >= 0 && points[i].x <= rightBorder) {
+			if(points[i].x >= leftBorder && points[i].x <= rightBorder) {
 				evaluatePoints.push_back(points[i]);
 			}
 		}
 	} else {
 		Point left[4], right[4];
 		divide(points, left, right);
-		addBezier(evaluatePoints, left);
-		addBezier(evaluatePoints, right);
+		addBezier(evaluatePoints, left, leftBorder, rightBorder);
+		addBezier(evaluatePoints, right, leftBorder, rightBorder);
 	}
 }

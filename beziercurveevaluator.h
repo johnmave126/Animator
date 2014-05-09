@@ -14,7 +14,7 @@ public:
 		std::vector<Point>& ptvEvaluatedCurvePts, 
 		const float& fAniLength, 
 		const bool& bWrap) const  ;
-	void addBezier(std::vector<Point>& evaluatePoints, Point points[], float rightBorder = 1.0e28) const;
+	void addBezier(std::vector<Point>& evaluatePoints, Point points[], float leftBorder = 0.0f, float rightBorder = 1.0e28f) const;
 	bool flat(Point points[]) const;
 	void divide(Point P[], Point L[], Point R[]) const;
 };

@@ -49,7 +49,7 @@ Fl_Menu_Item ModelerUIWindows::menu_m_pchoCurveType[] = {
 
 ModelerUIWindows::ModelerUIWindows() {
   Fl_Window* w;
-  { Fl_Window* o = m_pwndMainWnd = new Fl_Window(589, 705, "CS 341Animator (SP02)");
+  { Fl_Window* o = m_pwndMainWnd = new Fl_Window(589, 705, "CS 341 Animator (Sp02)");
     w = o;
     o->color(185);
     o->labeltype(FL_NORMAL_LABEL);
@@ -84,7 +84,7 @@ ModelerUIWindows::ModelerUIWindows() {
         o->end();
         Fl_Group::current()->resizable(o);
       }
-      { Fl_Group* o = m_pgrpCurveGroup = new Fl_Group(160, 55, 425, 435, "Curves");
+      { Fl_Group* o = m_pgrpCurveGroup = new Fl_Group(160, 55, 425, 465, "Curves");
         o->labelsize(12);
         { Fl_Group* o = new Fl_Group(160, 55, 420, 410);
           { Fl_Box* o = new Fl_Box(160, 55, 40, 20, "Useless Box");
@@ -109,7 +109,7 @@ ModelerUIWindows::ModelerUIWindows() {
           o->end();
           Fl_Group::current()->resizable(o);
         }
-        { Fl_Group* o = new Fl_Group(160, 470, 420, 20);
+        { Fl_Group* o = new Fl_Group(160, 470, 420, 50);
           { Fl_Box* o = new Fl_Box(160, 470, 75, 20, "Curve Type:");
             o->labelsize(12);
             o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);
@@ -127,6 +127,13 @@ ModelerUIWindows::ModelerUIWindows() {
           }
           { Fl_Button* o = m_pbtZoomAll = new Fl_Button(505, 470, 75, 20, "Z&oom All");
             o->labelsize(12);
+            o->user_data((void*)(this));
+          }
+          { Fl_Value_Input* o = m_iTension = new Fl_Value_Input(230, 495, 115, 25, "Tension:");
+            o->minimum(0.1);
+            o->maximum(3);
+            o->step(0.01);
+            o->value(0.5);
             o->user_data((void*)(this));
           }
           o->end();

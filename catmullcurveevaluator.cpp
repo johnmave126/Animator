@@ -35,7 +35,7 @@ void CatmullCurveEvaluator::evaluateCurve(const std::vector<Point>& ptvCtrlPts,
 			N[j] = P[i + j];
 		}
 		toBezier(N, V);
-		addBezier(ptvEvaluatedCurvePts, V, fAniLength);
+		addBezier(ptvEvaluatedCurvePts, V, 0.0f, fAniLength);
 	}
 }
 

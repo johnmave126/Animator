@@ -28,6 +28,7 @@
 #include "beziercurveevaluator.h"
 #include "bsplinecurveevaluator.h"
 #include "catmullcurveevaluator.h"
+#include "c2curveevaluator.h"
  
 
 #define LEFT		1
@@ -107,6 +108,7 @@ m_iCurrCurve(-1),
 m_ivActiveCurves(),
 m_fEndTime(20.0f),
 m_fCurrTime(0.0f),
+m_fTension(0.5f),
 m_rectCurrViewport(0.0f - ks_fViewportMargin, 1.0f + ks_fViewportMargin, 0.0f - ks_fViewportMargin, 1.0f + ks_fViewportMargin),
 m_bPanning(false),
 m_bHasEvent(false),
@@ -118,12 +120,10 @@ m_flcCurrCurve(FL_BLACK)
 
 	m_ppceCurveEvaluators[CURVE_TYPE_LINEAR] = new LinearCurveEvaluator();
 
-	// TODO: replace the linear evaluator for one of the three types of curves
 	m_ppceCurveEvaluators[CURVE_TYPE_BSPLINE] = new BsplineCurveEvaluator();
 	m_ppceCurveEvaluators[CURVE_TYPE_BEZIER] = new BezierCurveEvaluator();
 	m_ppceCurveEvaluators[CURVE_TYPE_CATMULLROM] = new CatmullCurveEvaluator();
-	// Note that C2-Interpolating curve is not a requirement
-	m_ppceCurveEvaluators[CURVE_TYPE_C2INTERPOLATING] = new LinearCurveEvaluator();
+	m_ppceCurveEvaluators[CURVE_TYPE_C2INTERPOLATING] = new C2CurveEvaluator();
 
 }
 
@@ -148,6 +148,7 @@ int GraphWidget::addCurve(const float fStartVal, const float fMinY, const float 
 	m_cdvCurveDomains.push_back(CurveDomain(fMinY, fMaxY));
 	m_ivCurveTypes.push_back(CURVE_TYPE_LINEAR);
 	m_ivvCurrCtrlPts.push_back(std::vector<int>());
+	m_fvCurveTension.push_back(0.5f);
 
 	return m_pcrvvCurves.size() - 1;
 }
@@ -510,6 +511,30 @@ void GraphWidget::endTime(const float fEndTime)
 			m_pcrvvCurves[i]->maxX(m_fEndTime);
 		}
 		invalidateAllCurves();
+	}
+}
+
+float GraphWidget::tension() const {
+	if(m_iCurrCurve >= 0) {
+		return m_fvCurveTension[m_iCurrCurve];
+	}
+	else {
+		return 0.5f;
+	}
+}
+
+void GraphWidget::tension(float t) {
+	if(m_iCurrCurve >= 0) {
+		m_fvCurveTension[m_iCurrCurve] = t;
+		((CatmullCurveEvaluator*)m_ppceCurveEvaluators[CURVE_TYPE_CATMULLROM])->setTension(t);
+		m_pcrvvCurves[m_iCurrCurve]->invalidate();
+	}
+}
+
+void GraphWidget::refreshTension() {
+	if(m_iCurrCurve >= 0) {
+		((CatmullCurveEvaluator*)m_ppceCurveEvaluators[CURVE_TYPE_CATMULLROM])->setTension(m_fvCurveTension[m_iCurrCurve]);
+		m_pcrvvCurves[m_iCurrCurve]->invalidate();
 	}
 }
 

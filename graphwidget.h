@@ -105,6 +105,10 @@ public:
 	// after a redraw.
 	Fl_Color currCurveColor() const { return m_flcCurrCurve; }
 
+	float tension() const;
+	void tension(float t);
+	void refreshTension();
+
 	const Curve* curve(int iCurve) const;
 	bool saveScript(const char* szFileName) const;
 	bool loadScript(const char* szFileName);
@@ -121,6 +125,7 @@ protected:
 	bool m_bRButtonDown;
 	bool m_bPanning;
 	int m_iMouseX, m_iMouseY, m_iMouseDX, m_iMouseDY;
+	float m_fTension;
 
 	// the current viewport (for zoomin). 
 	// (left, right, bottom, top) = (0, 1, 0, 1) means that there's no zoomin.
@@ -139,6 +144,7 @@ protected:
 	CurveEvaluator** m_ppceCurveEvaluators;
 	std::vector<int> m_ivActiveCurves;
 	std::vector<int_vector> m_ivvCurrCtrlPts;
+	std::vector<float> m_fvCurveTension;
 	float m_fEndTime;
 	float m_fCurrTime;
 

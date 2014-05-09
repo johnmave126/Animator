@@ -25,6 +25,7 @@
 
 #include "modelerui.h"
 #include "camera.h"
+#include "catmullcurveevaluator.h"
 
 using namespace std;
 
@@ -581,6 +582,15 @@ void ModelerUI::cb_timed(void *p)
 	Fl::repeat_timeout(dt, cb_timed, (void *)pui);
 }
 
+inline void ModelerUI::cb_tension_i(Fl_Value_Input* o, void *v) {
+	m_pwndGraphWidget->tension(o->value());
+	m_pwndGraphWidget->redraw();
+}
+
+void ModelerUI::cb_tension(Fl_Value_Input* o, void *v) {
+	((ModelerUI*)(o->user_data()))->cb_tension_i(o,v);
+}
+
 Fl_Box* ModelerUI::labelBox(int nBox) 
 {
   return (Fl_Box*)m_ppckPack->child(nBox * 2);
@@ -613,6 +623,9 @@ void ModelerUI::activeCurvesChanged()
 	}
 	else
 		m_pchoCurveType->deactivate();
+
+	m_iTension->value(m_pwndGraphWidget->tension());
+	m_pwndGraphWidget->refreshTension();
 
 	if (m_pwndGraphWidget->currCurveWrap() >= 0) {
 		m_pbtWrap->activate();
@@ -865,8 +878,6 @@ int ModelerUI::fps()
 void ModelerUI::fps(const int iFps)
 {
 	m_iFps = iFps;
-	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
-	ps->setFps(m_iFps);
 }
 
 ModelerUI::ModelerUI() : 
@@ -917,6 +928,8 @@ m_bSaveMovie(false)
 	m_poutTime->value("0.00");
 	m_poutPlayStart->value("0.00");
 	m_poutPlayEnd->value("20.00");
+
+	m_iTension->callback((Fl_Callback*)cb_tension);
 
 	endTime(20.0f);
 }
