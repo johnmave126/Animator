@@ -127,7 +127,7 @@ void ParticleSystem::computeForcesAndUpdateParticles(float t)
 
 
 /** Render particles */
-void ParticleSystem::drawParticles(float t)
+void ParticleSystem::drawParticles(float t, Camera* cam)
 {
 	if(!simulate) return;
 	//Look for the bake index
@@ -138,7 +138,7 @@ void ParticleSystem::drawParticles(float t)
 	}
 	std::vector<Particle>::iterator it;
 	for(it = particles.begin(); it!=particles.end(); it++) {
-		it->draw();
+		it->draw(cam);
 	}
 }
 

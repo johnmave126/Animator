@@ -20,6 +20,7 @@
 #include "vec.h"
 #include "particle.h"
 #include "force.h"
+#include "camera.h"
 #include <vector>
 #include <map>
 
@@ -36,7 +37,7 @@ public:
 	/** Simulation fxns **/
 	// This fxn should render all particles in the system,
 	// at current time t.
-	virtual void drawParticles(float t);
+	virtual void drawParticles(float t, Camera* cam);
 
 	// This fxn should save the configuration of all particles
 	// at current time t.

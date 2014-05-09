@@ -122,7 +122,7 @@ void ModelerView::draw()
 	ParticleSystem *ps = ModelerApplication::Instance()->GetParticleSystem();
 	if (ps != NULL) {
 		ps->computeForcesAndUpdateParticles(t);
-		ps->drawParticles(t);
+		ps->drawParticles(t, m_camera);
 	}
 }
 

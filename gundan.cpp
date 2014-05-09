@@ -27,6 +27,14 @@ public:
 			initJacobian();
 	}
     virtual void draw();
+	void initDL() {
+		for(int i = 1; i <= 4; i++) {
+			DLid[i] = glGenLists(1);
+			glNewList(DLid[i],GL_COMPILE);
+			drawGundan(i);
+			glEndList();
+		}
+	}
 	static Gundan *instance;
 private:
 	void drawHead();
@@ -39,6 +47,7 @@ private:
 	void drawLeftShank();
 	void drawRightShank();
 	void drawSword();
+	void drawGundan(int level);
 
 	void initJacobian();
 	void beginIK();
@@ -46,11 +55,14 @@ private:
 	bool updateIKR(int);
 	void drawGoal();
 
+
 	void spawnParticles(Mat4<float> cameraTransform);
 	Mat4<float> getModelViewMatrix();
 
 	Jacobian *left_feet;
 	bool IK_flag;
+
+	GLuint DLid[5];
 
 	Mat4f cameraT;
 };
@@ -499,6 +511,11 @@ void Gundan::draw()
 	int level = VAL(LEVEL);
 	//level 1
 	glPushMatrix();
+	drawGundan(level);
+	glPopMatrix();
+}
+
+void Gundan::drawGundan(int level) {
 	drawBody();
 	if(level>=2) {
 		glPushMatrix();
@@ -536,7 +553,6 @@ void Gundan::draw()
 		}
 		glPopMatrix();
 	}
-	glPopMatrix();
 }
 
 void Gundan::initJacobian() {

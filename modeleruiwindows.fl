@@ -11,7 +11,7 @@ class ModelerUIWindows {open
   } {
     Fl_Window m_pwndMainWnd {
       label {CS 341 Animator (Sp02)} open
-      xywh {47 38 589 705} color 185 labeltype NORMAL_LABEL when 0 visible
+      xywh {47 38 589 705} color 185 labeltype NORMAL_LABEL when 0 hide
     } {
       Fl_Menu_Bar m_pmbMenuBar {
         xywh {0 0 590 25} selection_color 137 labelsize 12 textsize 12
@@ -104,7 +104,7 @@ class ModelerUIWindows {open
         }
         Fl_Group m_pgrpCurveGroup {
           label Curves open
-          xywh {160 55 425 465} labelsize 12
+          xywh {160 55 425 485} labelsize 12
         } {
           Fl_Group {} {
             private xywh {160 55 420 410} resizable
@@ -132,7 +132,7 @@ class ModelerUIWindows {open
             } {}
           }
           Fl_Group {} {open
-            xywh {160 470 420 50}
+            xywh {160 470 420 70}
           } {
             Fl_Box {} {
               label {Curve Type:}
@@ -166,7 +166,7 @@ class ModelerUIWindows {open
             Fl_Light_Button m_pbtWrap {
               label Wrap
               user_data this
-              xywh {345 470 70 20} labelsize 12
+              xywh {350 470 70 20} labelsize 12
             }
             Fl_Button m_pbtZoomAll {
               label {Z&oom All}
@@ -175,18 +175,28 @@ class ModelerUIWindows {open
             }
             Fl_Value_Input m_iTension {
               label {Tension:}
-              user_data this selected
+              user_data this
               xywh {230 495 115 25} minimum 0.1 maximum 3 step 0.01 value 0.5
+            }
+            Fl_Light_Button m_pbtEvalP {
+              label {Eval Pts}
+              user_data this
+              xywh {500 495 80 20}
+            }
+            Fl_Value_Slider m_psldrFlat {
+              label {-log_10(flat_eps)}
+              user_data this selected
+              xywh {360 495 135 20} type {Horz Knob} align 6 minimum 1 maximum 8 step 1 value 5 resizable
             }
           }
         }
       }
       Fl_Group {} {
-        label {Animation Controls}
+        label {Animation Controls} open
         xywh {5 510 580 190} labeltype NO_LABEL
       } {
         Fl_Group {} {
-          label Playback
+          label Playback open
           xywh {95 550 490 150} labeltype NO_LABEL resizable
         } {
           Fl_Group {} {
